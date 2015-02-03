@@ -49,6 +49,7 @@
 # - mysql_host: host of mysql server (default: localhost)
 #
 # Drupal configuration variables:
+# - conf: contains the key-value pairs of settings.php
 # - conf_cron_key: cron_key setting used for cron access
 #
 # Remarks:
@@ -84,6 +85,7 @@ class drupal (
   $site_ssl_chain_file = '',
   $package_repository = undef,
   $package_branch = undef,
+  $conf = undef,
   $conf_cron_key = undef,
   $conf_markdown_directory = undef,
   $conf_ga_account = undef,
