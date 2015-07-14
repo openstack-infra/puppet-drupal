@@ -89,13 +89,13 @@ class drupal (
   $conf_ga_account = undef,
   $conf_openid_provider = undef,
 ) {
-  include apache
+  include ::httpd
   include pear
 
   # ssl certificates
   if $site_ssl_enabled == true {
 
-    include apache::ssl
+    include ::httpd::ssl
 
     # site x509 certificate
     if $site_ssl_cert_file_contents != '' {
@@ -104,7 +104,7 @@ class drupal (
         group   => 'root',
         mode    => '0640',
         content => $site_ssl_cert_file_contents,
-        before  => Apache::Vhost[$site_name],
+        before  => Httpd::Vhost[$site_name],
       }
     }
 
@@ -115,7 +115,7 @@ class drupal (
         group   => 'root',
         mode    => '0640',
         content => $site_ssl_key_file_contents,
-        before  => Apache::Vhost[$site_name],
+        before  => Httpd::Vhost[$site_name],
       }
     }
 
@@ -126,7 +126,7 @@ class drupal (
         group   => 'root',
         mode    => '0640',
         content => $site_ssl_chain_file_contents,
-        before  => Apache::Vhost[$site_name],
+        before  => Httpd::Vhost[$site_name],
       }
     }
   }
@@ -139,7 +139,7 @@ class drupal (
     mode   => '0755',
   }
 
-  apache::vhost { $site_name:
+  ::httpd::vhost { $site_name:
     port     => 80,
     priority => '50',
     docroot  => $site_docroot,
@@ -165,7 +165,7 @@ class drupal (
     require   => File[$site_root],
   }
 
-  a2mod { 'rewrite':
+  httpd_mod { 'rewrite':
     ensure => present,
   }
 
