@@ -79,9 +79,9 @@ class drupal (
   $site_ssl_cert_file_contents = undef,
   $site_ssl_key_file_contents = undef,
   $site_ssl_chain_file_contents = undef,
-  $site_ssl_cert_file = '',
-  $site_ssl_key_file = '',
-  $site_ssl_chain_file = '',
+  $site_ssl_cert_file = undef,
+  $site_ssl_key_file = undef,
+  $site_ssl_chain_file = undef,
   $package_repository = undef,
   $package_branch = undef,
   $conf = undef,
@@ -90,7 +90,7 @@ class drupal (
   $conf_openid_provider = undef,
 ) {
   include ::httpd
-  include pear
+  include ::pear
 
   # ssl certificates
   if $site_ssl_enabled == true {
@@ -207,10 +207,10 @@ class drupal (
   # drush site-alias definition
 
   file { '/etc/drush':
-    ensure  => directory,
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0755',
+    ensure => directory,
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
   }
 
   file { '/etc/drush/aliases.drushrc.php':
@@ -226,41 +226,41 @@ class drupal (
   # site custom configuration
 
   file { "${site_root}/etc":
-    ensure    => directory,
-    owner     => 'root',
-    group     => 'root',
-    mode      => '0755',
-    require   => File[$site_root],
+    ensure  => directory,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0755',
+    require => File[$site_root],
   }
 
   file { "${site_root}/etc/settings.php":
-    ensure    => file,
-    owner     => 'root',
-    group     => 'root',
-    mode      => '0400',
-    content   => template('drupal/settings.php.erb'),
-    replace   => true,
-    require   => File["${site_root}/etc"],
+    ensure  => file,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0400',
+    content => template('drupal/settings.php.erb'),
+    replace => true,
+    require => File["${site_root}/etc"],
   }
 
   # deploy a site from scratch when site status is 'NOT INSTALLED'
   exec { "sitedeploy-${site_name}":
-    command     => "/usr/bin/drush dsd-init @${site_alias}",
-    logoutput   => true,
-    timeout     => 600,
-    onlyif      => "/usr/bin/drush dsd-status @${site_alias} | /bin/grep -c 'NOT INSTALLED'",
-    require     => [
+    command   => "/usr/bin/drush dsd-init @${site_alias}",
+    logoutput => true,
+    timeout   => 600,
+    onlyif    => "/usr/bin/drush dsd-status @${site_alias} | /bin/grep -c 'NOT INSTALLED'",
+    require   => [
       File['/etc/drush/aliases.drushrc.php'],
       ]
   }
 
   # update the site into a new slot when a remote update available
   exec { "siteupdate-${site_name}":
-    command     => "/usr/bin/drush dsd-update @${site_alias}",
-    logoutput   => true,
-    timeout     => 600,
-    onlyif      => "/usr/bin/drush dsd-status @${site_alias} | /bin/grep -c 'UPDATE'",
-    require     => [
+    command   => "/usr/bin/drush dsd-update @${site_alias}",
+    logoutput => true,
+    timeout   => 600,
+    onlyif    => "/usr/bin/drush dsd-status @${site_alias} | /bin/grep -c 'UPDATE'",
+    require   => [
       File['/etc/drush/aliases.drushrc.php'],
       Exec["sitedeploy-${site_name}"],
       ]
