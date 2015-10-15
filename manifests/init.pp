@@ -200,7 +200,6 @@ class drupal (
       password => $site_mysql_password,
       host     => $site_mysql_host,
       grant    => ['all'],
-      notify   => Distbuild["distbuild-${site_name}"],
     }
   }
 
