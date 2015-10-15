@@ -66,9 +66,9 @@ class drupal (
   $site_root = undef,
   $site_docroot = undef,
   $site_mysql_host = 'localhost',
-  $site_mysql_user = undef,
+  $site_mysql_user = 'drupal',
   $site_mysql_password = undef,
-  $site_mysql_database = undef,
+  $site_mysql_database = 'drupal',
   $site_profile = 'standard',
   $site_admin_password = undef,
   $site_alias = undef,
@@ -207,6 +207,9 @@ class drupal (
 
   # site mysql database
   if $site_create_database == true {
+    if $site_mysql_password == undef {
+      fail('You must set $site_mysql_password when $site_create_database is true.')
+    }
     mysql::db { $site_mysql_database:
       user     => $site_mysql_user,
       password => $site_mysql_password,
