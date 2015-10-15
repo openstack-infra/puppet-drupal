@@ -61,7 +61,7 @@
 #
 
 class drupal (
-  $site_name = undef,
+  $site_name = $::fqdn,
   $site_root = undef,
   $site_docroot = "${site_root}/w",
   $site_mysql_host = 'localhost',
