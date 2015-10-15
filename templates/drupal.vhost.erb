@@ -27,7 +27,7 @@ NameVirtualHost <%= @vhost_name %>:443
 <%= " ServerAlias #{@serveraliases}" %>
 <% end -%>
   DocumentRoot <%= @docroot %>
-  <Directory <%= @site_docroot %>>
+  <Directory <%= @docroot %>>
     Options FollowSymLinks MultiViews
     AllowOverride None
     Order allow,deny

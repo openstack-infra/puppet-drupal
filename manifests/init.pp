@@ -62,13 +62,13 @@
 
 class drupal (
   $site_name = $::fqdn,
+  $site_vhost_root = '/srv/vhosts',
   $site_root = undef,
-  $site_docroot = "${site_root}/w",
+  $site_docroot = undef,
   $site_mysql_host = 'localhost',
   $site_mysql_user = undef,
   $site_mysql_password = undef,
   $site_mysql_database = undef,
-  $site_vhost_root = '/srv/vhosts',
   $site_profile = 'standard',
   $site_admin_password = undef,
   $site_alias = undef,
@@ -91,6 +91,18 @@ class drupal (
 ) {
   include ::httpd
   include ::pear
+
+  if $site_root == undef {
+    $_site_root = "${site_vhost_root}/${site_name}"
+  } else {
+    $_site_root = $site_root
+  }
+
+  if $site_docroot == undef {
+    $_site_docroot = "${_site_root}/w"
+  } else {
+    $_site_docroot = $site_docroot
+  }
 
   # ssl certificates
   if $site_ssl_enabled == true {
@@ -142,12 +154,12 @@ class drupal (
   ::httpd::vhost { $site_name:
     port     => 80,
     priority => '50',
-    docroot  => $site_docroot,
+    docroot  => $_site_docroot,
     require  => Exec['init-slot-dirs'],
     template => 'drupal/drupal.vhost.erb',
   }
 
-  file { $site_root:
+  file { $_site_root:
     ensure  => directory,
     owner   => 'root',
     group   => 'www-data',
@@ -159,10 +171,10 @@ class drupal (
   # so drush dsd can flip this symlink between slot0/slot1
   # (won't be recreated until the symlink exists)
   exec { 'init-slot-dirs':
-    command   => "/bin/ln -s ${site_root}/slot1 ${site_docroot}",
-    unless    => "/usr/bin/test -L ${site_docroot}",
+    command   => "/bin/ln -s ${_site_root}/slot1 ${_site_docroot}",
+    unless    => "/usr/bin/test -L ${_site_docroot}",
     logoutput => 'on_failure',
-    require   => File[$site_root],
+    require   => File[$_site_root],
   }
 
   httpd_mod { 'rewrite':
@@ -224,22 +236,22 @@ class drupal (
 
   # site custom configuration
 
-  file { "${site_root}/etc":
+  file { "${_site_root}/etc":
     ensure  => directory,
     owner   => 'root',
     group   => 'root',
     mode    => '0755',
-    require => File[$site_root],
+    require => File[$_site_root],
   }
 
-  file { "${site_root}/etc/settings.php":
+  file { "${_site_root}/etc/settings.php":
     ensure  => file,
     owner   => 'root',
     group   => 'root',
     mode    => '0400',
     content => template('drupal/settings.php.erb'),
     replace => true,
-    require => File["${site_root}/etc"],
+    require => File["${_site_root}/etc"],
   }
 
   # deploy a site from scratch when site status is 'NOT INSTALLED'
