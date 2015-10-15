@@ -98,7 +98,7 @@ class drupal (
     include ::httpd::ssl
 
     # site x509 certificate
-    if $site_ssl_cert_file_contents != '' {
+    if $site_ssl_cert_file_contents != undef {
       file { $site_ssl_cert_file:
         owner   => 'root',
         group   => 'root',
@@ -109,7 +109,7 @@ class drupal (
     }
 
     # site ssl key
-    if $site_ssl_key_file_contents != '' {
+    if $site_ssl_key_file_contents != undef {
       file { $site_ssl_key_file:
         owner   => 'root',
         group   => 'root',
@@ -120,7 +120,7 @@ class drupal (
     }
 
     # site ca certificates file
-    if $site_ssl_chain_file_contents != '' {
+    if $site_ssl_chain_file_contents != undef {
       file { $site_ssl_chain_file:
         owner   => 'root',
         group   => 'root',
