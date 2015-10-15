@@ -282,14 +282,16 @@ class drupal (
 
   # setup cron job
 
-  cron { $site_name:
-    name    => "${site_name}.cron",
-    command => "wget -O /dev/null -q -t 1 ${$site_base_url}/cron.php?cron_key=${$conf['cron_key']}",
-    user    => root,
-    minute  => '*/5',
-    require => [
-      Exec["sitedeploy-${site_name}"],
-      ]
+  if $site_base_url != false and is_hash($conf) {
+    cron { $site_name:
+      name    => "${site_name}.cron",
+      command => "wget -O /dev/null -q -t 1 ${$site_base_url}/cron.php?cron_key=${$conf['cron_key']}",
+      user    => root,
+      minute  => '*/5',
+      require => [
+        Exec["sitedeploy-${site_name}"],
+        ]
+    }
   }
 
 }
