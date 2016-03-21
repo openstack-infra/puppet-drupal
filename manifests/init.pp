@@ -90,7 +90,6 @@ class drupal (
   $conf_openid_provider = undef,
 ) {
   include ::httpd
-  include ::pear
 
   if $site_root == undef {
     $_site_root = "${site_vhost_root}/${site_name}"
@@ -201,7 +200,7 @@ class drupal (
   }
 
   # setup drush and drush-dsd extension
-  drush { 'drush':
+  ::drupal::drush { 'drush':
     require => File['/srv/downloads'],
   }
 
