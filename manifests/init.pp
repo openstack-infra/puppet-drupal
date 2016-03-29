@@ -89,6 +89,8 @@ class drupal (
   $site_ssl_key_file_contents   = undef,
   $site_vhost_root              = '/srv/vhosts',
 ) {
+  # Dependencies
+  require ::drupal::params
   include ::httpd
   include ::pear
 
@@ -150,6 +152,9 @@ class drupal (
     group  => 'root',
     mode   => '0755',
   }
+
+  # Check vhost permission set.
+  $new_vhost_perms = (versioncmp($::drupal::params::apache_version, '2.4') >= 0)
 
   ::httpd::vhost { $site_name:
     port     => 80,
