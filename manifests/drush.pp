@@ -27,21 +27,16 @@ define drupal::drush (
   $drushdsdtar     = 'https://github.com/mkissam/drush-dsd/archive/v0.10.tar.gz',
 ) {
 
-  # pear / drush cli tool
-  pear::package { 'PEAR': }
-  pear::package { 'Console_Table': }
-  pear::package { 'drush':
-      version    => '6.0.0',
-      repository => 'pear.drush.org',
-      require    => [ Pear::Package['PEAR'], Pear::Package['Console_Table'] ],
+  class {'::drush::git::drush':
+    git_branch => '6.x',
   }
 
-  file { '/usr/share/php/drush/commands/dsd':
+  file { '/usr/share/drush/commands/dsd':
     ensure  => directory,
     owner   => 'root',
     group   => 'root',
     mode    => '0755',
-    require => [ Pear::Package['drush'] ]
+    require => Class['::drush::git::drush'],
   }
 
   # If we don't already have the specified dsd tar, download it.
@@ -65,11 +60,11 @@ define drupal::drush (
   # If drush-dsd just created extract to /etc/drush
   exec { 'drush-dsd-initial-init':
     user        => 'root',
-    command     => "/bin/tar -C /usr/share/php/drush/commands/dsd --strip 1 -xzvf ${download_dir}/drush-dsd.tar.gz;/usr/bin/drush cc all",
+    command     => "/bin/tar -C /usr/share/drush/commands/dsd --strip 1 -xzvf ${download_dir}/drush-dsd.tar.gz;/usr/bin/drush cc all",
     subscribe   => File["${download_dir}/drush-dsd.tar.gz"],
     refreshonly => true,
     logoutput   => true,
-    require     => File['/usr/share/php/drush/commands/dsd'],
+    require     => File['/usr/share/drush/commands/dsd'],
   }
 
 }
