@@ -238,7 +238,7 @@ class drupal (
     mode    => '0400',
     content => template('drupal/aliases.drushrc.php.erb'),
     replace => true,
-    require => [ File['/etc/drush'], Drush['drush'] ],
+    require => [ File['/etc/drush'], Drupal::Drush['drush'] ],
   }
 
   # site custom configuration
