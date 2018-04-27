@@ -5,7 +5,7 @@
 
 NameVirtualHost <%= @vhost_name %>:80
 <VirtualHost <%= @vhost_name %>:80>
-<% if @site_ssl_enabled %>
+<% if scope.lookupvar('::drupal::site_ssl_enabled') %>
   ServerName <%= @srvname %>
   Redirect / https://<%= @srvname %>/
 </VirtualHost>
@@ -14,10 +14,10 @@ NameVirtualHost <%= @vhost_name %>:443
 <VirtualHost <%= @vhost_name %>:443>
   SSLEngine on
   SSLProtocol All -SSLv2 -SSLv3
-  SSLCertificateFile      <%= @site_ssl_cert_file %>
-  SSLCertificateKeyFile   <%= @site_ssl_key_file %>
-<% if @site_ssl_chain_file_contents %>
-  SSLCertificateChainFile <%= @site_ssl_chain_file %>
+  SSLCertificateFile      <%= scope.lookupvar('::drupal::site_ssl_cert_file') %>
+  SSLCertificateKeyFile   <%= scope.lookupvar('::drupal::site_ssl_key_file') %>
+<% if scope.lookupvar('::drupal::site_ssl_chain_file_contents') %>
+  SSLCertificateChainFile <%= scope.lookupvar('::drupal::site_ssl_chain_file') %>
 <% end %>
 <% end %>
   ServerName <%= @srvname %>
@@ -30,7 +30,7 @@ NameVirtualHost <%= @vhost_name %>:443
   <Directory <%= @docroot %>>
     Options FollowSymLinks MultiViews
     AllowOverride None
-    <% if @new_vhost_perms %>
+    <% if scope.lookupvar('::drupal::new_vhost_perms') %>
       Require all granted
     <% else %>
       Order allow,deny
