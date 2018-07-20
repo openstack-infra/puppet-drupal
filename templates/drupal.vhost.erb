@@ -16,7 +16,7 @@ NameVirtualHost <%= @vhost_name %>:443
   SSLProtocol All -SSLv2 -SSLv3
   SSLCertificateFile      <%= scope.lookupvar('::drupal::site_ssl_cert_file') %>
   SSLCertificateKeyFile   <%= scope.lookupvar('::drupal::site_ssl_key_file') %>
-<% if scope.lookupvar('::drupal::site_ssl_chain_file_contents') %>
+<% if ! ['', nil, :undef].include?(scope.lookupvar('::drupal::site_ssl_chain_file_contents')) %>
   SSLCertificateChainFile <%= scope.lookupvar('::drupal::site_ssl_chain_file') %>
 <% end %>
 <% end %>
