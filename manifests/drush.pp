@@ -27,8 +27,12 @@ define drupal::drush (
   $drushdsdtar     = 'https://github.com/mkissam/drush-dsd/archive/v0.10.tar.gz',
 ) {
 
+  # Fix the resource ordering in the drush::git::drush class
+  Drush::Git['https://github.com/drush-ops/drush.git'] -> Exec['Install composer']
+
   class {'::drush::git::drush':
     git_branch => '6.x',
+    git_tag    => '6.x',
   }
 
   file { '/usr/share/drush/commands/dsd':
