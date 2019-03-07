@@ -16,7 +16,7 @@
   ],
   "dependencies": [
     { "name": "puppetlabs/stdlib", "version_requirement": ">= 3.2.0" },
-    { "name": "puppetlabs/mysql", "version_requirement": "= 0.6.1" },
+    { "name": "puppetlabs/mysql", "version_requirement": ">= 0.6.1" },
     { "name": "openstackinfra/httpd", "version_requirement": "0.x" }
   ]
 }
